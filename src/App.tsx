@@ -6,7 +6,7 @@ const mockTodos: TodoType[] = [
   {
     id: '1',
     title: 'todo 1',
-    completed: false
+    completed: true
   },
   {
     id: '2',
@@ -24,9 +24,9 @@ const App: React.FC = () => {
   const [todos] = useState(mockTodos);
 
   return (
-    <>
+    <div className="todoapp">
       <Todos todos={todos}/>
-    </>
+    </div>
   );
 }
 
