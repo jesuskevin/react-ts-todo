@@ -28,10 +28,26 @@ const App: React.FC = () => {
     setTodos(newTodos);
   }
 
+  const hanldeCompleted = ({id, completed}: Pick<TodoType, 'id' | 'completed'>): void => {
+    const newTodos = todos.map((todo) => {
+      if (todo.id == id) {
+        return {
+          ...todo,
+          completed,
+        };
+      }
+
+      return todo;
+    });
+
+    setTodos(newTodos);
+  }
+
   return (
     <div className="todoapp">
       <Todos
         onRemoveTodo={handleRemove}
+        onToggleCompleted={hanldeCompleted}
         todos={todos}
       />
     </div>

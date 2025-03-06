@@ -3,10 +3,11 @@ import { Todo } from "./Todo";
 
 interface TodoProps {
     todos: TodoType[]
-    onRemoveTodo: ({ id }: TodoId) => void,
+    onToggleCompleted: ({id, completed}: Pick<TodoType, 'id' | 'completed'>) => void,
+    onRemoveTodo: ({ id }: TodoId) => void
 }
 
-export const Todos: React.FC<TodoProps> = ({ todos, onRemoveTodo }) => {
+export const Todos: React.FC<TodoProps> = ({ todos, onRemoveTodo, onToggleCompleted }) => {
     return (
         <ul className="todo-list">
             {todos.map(todo => (
@@ -17,6 +18,7 @@ export const Todos: React.FC<TodoProps> = ({ todos, onRemoveTodo }) => {
                         title={todo.title}
                         completed={todo.completed}
                         onRemoveTodo={onRemoveTodo}
+                        onToggleCompleted={onToggleCompleted}
                     />
                 </li>
             ))}
