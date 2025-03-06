@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Todos } from "./components/Todos";
-import { Todo } from "./types";
+import { TodoType } from "./types";
 
-const mockTodos: Todo[] = [
+const mockTodos: TodoType[] = [
   {
     id: '1',
     title: 'todo 1',

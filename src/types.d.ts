@@ -1,1 +1,1 @@
-export interface Todo {id: string, title: string, completed: boolean};
+export interface TodoType {id: string, title: string, completed: boolean};
