@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { Todos } from "./components/Todos";
-import { TodoType } from "./types";
+import { TodoId, TodoType } from "./types";
 
 const mockTodos: TodoType[] = [
   {
     id: '1',
     title: 'todo 1',
-    completed: true
+    completed: false
   },
   {
     id: '2',
@@ -21,11 +21,19 @@ const mockTodos: TodoType[] = [
 ];
 
 const App: React.FC = () => {
-  const [todos] = useState(mockTodos);
+  const [todos, setTodos] = useState(mockTodos);
+
+  const handleRemove = ({ id }: TodoId): void => {
+    const newTodos = todos.filter((todo) => todo.id != id);
+    setTodos(newTodos);
+  }
 
   return (
     <div className="todoapp">
-      <Todos todos={todos}/>
+      <Todos
+        onRemoveTodo={handleRemove}
+        todos={todos}
+      />
     </div>
   );
 }

@@ -1,8 +1,12 @@
-import { TodoType } from "../types";
+import { TodoId, TodoType } from "../types";
 
-export const Todo: React.FunctionComponent<TodoType> = ({id, title, completed}) => {
+interface Props extends TodoType {
+    onRemoveTodo: ({ id }: TodoId) => void
+}
+
+export const Todo: React.FunctionComponent<Props> = ({id, title, completed, onRemoveTodo}) => {
     return (
-        <div className="view" id={id}>
+        <div className="view">
             <input
                 className="toggle"
                 type="checkbox"
@@ -12,7 +16,7 @@ export const Todo: React.FunctionComponent<TodoType> = ({id, title, completed}) 
             <label>{title}</label>
             <button
                 className="destroy"
-                onClick={() => {}}
+                onClick={() => {onRemoveTodo({ id })}}
             />
         </div>
     );
