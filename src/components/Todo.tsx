@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { TodoType } from "../types";
 
 interface Props extends TodoType {
-    onToggleCompleted: ({id, completed}: Pick<TodoType, 'id' | 'completed'>) => void,
+    onToggleCompleted: (id: string, completed: boolean) => void,
     removeTodo: (id: string) => void
     isEditing: string,
     setIsEditing: (completed: string) => void
@@ -44,7 +44,7 @@ export const Todo: React.FunctionComponent<Props> = ({id, title, completed, remo
                     type="checkbox"
                     checked={completed}
                     onChange={(event)=> {
-                        onToggleCompleted({id, completed: event.target.checked})
+                        onToggleCompleted(id, event.target.checked)
                     }}
                 />
                 <label>{title}</label>

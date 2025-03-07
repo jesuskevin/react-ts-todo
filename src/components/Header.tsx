@@ -1,8 +1,7 @@
-import { TodoTitle } from "../types";
 import { CreateTodo } from "./CreateTodo";
 
 interface Props {
-    handleAddTodo: ({title}: TodoTitle) => void,
+    handleAddTodo: (title: string) => void,
 }
 
 export const Header: React.FunctionComponent<Props> = ({ handleAddTodo }) => {

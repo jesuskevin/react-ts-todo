@@ -4,7 +4,7 @@ import { Todo } from "./Todo";
 
 interface TodoProps {
     todos: TodoType[]
-    onToggleCompleted: ({id, completed}: Pick<TodoType, 'id' | 'completed'>) => void,
+    onToggleCompleted: (id: string, completed: boolean) => void,
     removeTodo: (id: string) => void,
     setTitle:  (params: { id: string, title: string }) => void
 }

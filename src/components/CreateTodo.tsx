@@ -1,8 +1,7 @@
 import { useState } from "react";
-import { TodoTitle } from "../types";
 
 interface Props {
-    handleAddTodo: ({title}: TodoTitle) => void,
+    handleAddTodo: (title: string) => void,
 }
 
 export const CreateTodo: React.FunctionComponent<Props> = ({ handleAddTodo }) => {
@@ -10,7 +9,7 @@ export const CreateTodo: React.FunctionComponent<Props> = ({ handleAddTodo }) =>
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
         event.preventDefault();
-        handleAddTodo({title: inputValue});
+        handleAddTodo(inputValue);
         setInputValue('');
     }
 
