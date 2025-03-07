@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Todos } from "./components/Todos";
-import { FilterValues, TodoId, TodoTitle, TodoType } from "./types";
+import { FilterValues, TodoTitle, TodoType } from "./types";
 import { TODO_FILTERS } from "./const";
 import { Footer } from "./components/Footer";
 import { Header } from "./components/Header";
@@ -27,7 +27,7 @@ const App: React.FC = () => {
   const [todos, setTodos] = useState(mockTodos);
   const [filterSelected, setFilterSelected] = useState<FilterValues>(TODO_FILTERS.ALL);
 
-  const handleRemove = ({ id }: TodoId): void => {
+  const handleRemove = (id: string): void => {
     const newTodos = todos.filter((todo) => todo.id != id);
     setTodos(newTodos);
   }
@@ -79,13 +79,29 @@ const App: React.FC = () => {
     setTodos(newTodos);
   }
 
+  const handleUpdateTitle = ({ id, title }: { id: string, title: string }): void => {
+    const newTodos = todos.map((todo) => {
+      if (todo.id === id) {
+        return {
+          ...todo,
+          title
+        }
+      }
+
+      return todo
+    })
+
+    setTodos(newTodos)
+  }
+
   return (
     <div className="todoapp">
       <Header
         handleAddTodo={handleAddTodo}
       />
       <Todos
-        onRemoveTodo={handleRemove}
+        setTitle={handleUpdateTitle}
+        removeTodo={handleRemove}
         onToggleCompleted={hanldeCompleted}
         todos={filteredTodos}
       />
