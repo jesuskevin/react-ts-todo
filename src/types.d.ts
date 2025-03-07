@@ -7,3 +7,5 @@ export interface TodoType {
 export type TodoId = Pick<TodoType, 'id'>;
 export type TodoTitle = Pick<TodoType, 'title'>;
 export type TodoCompleted = Pick<TodoType, 'completed'>;
+
+export type FilterValues = typeof TODO_FILTERS[keyof typeof TODO_FILTERS];
