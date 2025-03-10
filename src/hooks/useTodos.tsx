@@ -1,5 +1,5 @@
 import { useEffect, useReducer } from "react";
-import { TodoType, FilterValues } from "../types";
+import { TodoType, FilterValues, TodoId, TodoTitle } from "../types";
 import { TODO_FILTERS } from "../const";
 import { addTodo, fetchTodos, updateTodos } from "../services/todos";
 
@@ -25,7 +25,7 @@ type Action =
   | { type: "FILTER_CHANGE"; payload: { filter: FilterValues } }
   | { type: "REMOVE"; payload: { id: string } }
   | { type: "SAVE"; payload: TodoType}
-  | { type: "UPDATE_TITLE"; payload: { id: string; title: string } };
+  | { type: "UPDATE_TITLE"; payload: { id: TodoId; title: TodoTitle } };
 
 interface State {
   sync: boolean;
@@ -128,7 +128,7 @@ export const useTodos = (): {
   handleFilterChange: (filter: FilterValues) => void;
   handleRemove: (id: string) => void;
   handleSave: (title: string) => void;
-  handleUpdateTitle: (params: { id: string; title: string }) => void;
+  handleUpdateTitle: (params: { id: TodoId; title: TodoTitle }) => void;
 } => {
   const [{ sync, todos, filterSelected }, dispatch] = useReducer(
     reducer,
@@ -143,14 +143,19 @@ export const useTodos = (): {
     dispatch({ type: "REMOVE", payload: { id } });
   };
 
-  const handleUpdateTitle = ({
+  const handleUpdateTitle = async ({
     id,
     title,
   }: {
-    id: string;
-    title: string;
-  }): void => {
-    dispatch({ type: "UPDATE_TITLE", payload: { id, title } });
+    id: TodoId;
+    title: TodoTitle;
+  }): Promise<void> => {
+    try {
+      await updateTodos({id, title});
+      dispatch({ type: "UPDATE_TITLE", payload: { id, title } });
+    } catch (error) {
+      console.error("Error al actualizar el todo:", error);
+    }
   };
 
   const handleSave = async (title: string): Promise<void> => {
@@ -207,14 +212,6 @@ export const useTodos = (): {
         console.error(err);
       });
   }, []);
-
-  useEffect(() => {
-    if (sync) {
-      updateTodos({ todos }).catch((err) => {
-        console.error(err);
-      });
-    }
-  }, [todos, sync]);
 
   return {
     activeCount,

@@ -1,4 +1,4 @@
-import { TodoType } from '../types'
+import { TodoId, TodoTitle, TodoType } from '../types'
 
 const API_URL = 'http://127.0.0.1:8000/api/todo';
 
@@ -13,17 +13,17 @@ export const fetchTodos = async (): Promise<TodoType[]> => {
   return todos
 }
 
-export const updateTodos = async ({ todos }: { todos: TodoType[] }): Promise<boolean> => {
-  const res = await fetch(API_URL, {
+export const updateTodos = async ({ id, title }: { id: TodoId, title: TodoTitle }): Promise<TodoType> => {
+  const res = await fetch(`${API_URL}/${id}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
-      'X-Master-Key': import.meta.env.VITE_API_BIN_KEY
     },
-    body: JSON.stringify(todos)
+    body: JSON.stringify({title})
   })
 
-  return res.ok
+  const todo = await res.json();
+  return todo;
 }
 
 export const addTodo = async (data: Omit<TodoType, "id">): Promise<TodoType> => {
