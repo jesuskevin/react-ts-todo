@@ -61,3 +61,14 @@ export const clearCompleted = async (todosCompleted: TodoType[]): Promise<boolea
 
   return res.ok;
 }
+
+export const markCompleted = async (id: TodoId): Promise<boolean> => {
+  const res = await fetch(`${API_URL}/${id}/complete`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+
+  return res.ok;
+}

@@ -1,7 +1,7 @@
 import { useEffect, useReducer } from "react";
 import { TodoType, FilterValues, TodoId, TodoTitle } from "../types";
 import { TODO_FILTERS } from "../const";
-import { addTodo, clearCompleted, fetchTodos, removeTodo, updateTodos } from "../services/todos";
+import { addTodo, clearCompleted, fetchTodos, markCompleted, removeTodo, updateTodos } from "../services/todos";
 
 const initialState = {
   sync: false,
@@ -136,8 +136,13 @@ export const useTodos = (): {
     initialState
   );
 
-  const handleCompleted = (id: string, completed: boolean): void => {
-    dispatch({ type: "COMPLETED", payload: { id, completed } });
+  const handleCompleted = async (id: string, completed: boolean): Promise<void> => {
+    try {
+      await markCompleted(id);
+      dispatch({ type: "COMPLETED", payload: { id, completed } });
+    } catch (error) {
+      console.error("Error al completar el todo:", error);
+    }
   };
 
   const handleRemove = async (id: TodoId): Promise<void> => {
