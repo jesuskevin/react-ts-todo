@@ -49,3 +49,15 @@ export const removeTodo = async (id: TodoId): Promise<boolean> => {
 
   return res.ok;
 }
+
+export const clearCompleted = async (todosCompleted: TodoType[]): Promise<boolean> => {
+  const res = await fetch(`${API_URL}/clear-completed`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(todosCompleted),
+  })
+
+  return res.ok;
+}

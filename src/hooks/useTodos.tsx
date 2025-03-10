@@ -1,7 +1,7 @@
 import { useEffect, useReducer } from "react";
 import { TodoType, FilterValues, TodoId, TodoTitle } from "../types";
 import { TODO_FILTERS } from "../const";
-import { addTodo, fetchTodos, removeTodo, updateTodos } from "../services/todos";
+import { addTodo, clearCompleted, fetchTodos, removeTodo, updateTodos } from "../services/todos";
 
 const initialState = {
   sync: false,
@@ -20,7 +20,7 @@ const initialState = {
 
 type Action =
   | { type: "INIT_TODOS"; payload: { todos: TodoType[] } }
-  | { type: "CLEAR_COMPLETED" }
+  | { type: "CLEAR_COMPLETED"; payload: { todosNotCompleted: TodoType[] }}
   | { type: "COMPLETED"; payload: { id: string; completed: boolean } }
   | { type: "FILTER_CHANGE"; payload: { filter: FilterValues } }
   | { type: "REMOVE"; payload: { id: TodoId } }
@@ -44,10 +44,11 @@ const reducer = (state: State, action: Action): State => {
   }
 
   if (action.type === "CLEAR_COMPLETED") {
+    const { todosNotCompleted } = action.payload;
     return {
       ...state,
       sync: true,
-      todos: state.todos.filter((todo) => !todo.completed),
+      todos: todosNotCompleted,
     };
   }
 
@@ -177,8 +178,15 @@ export const useTodos = (): {
     }
   };
 
-  const handleClearCompleted = (): void => {
-    dispatch({ type: "CLEAR_COMPLETED" });
+  const handleClearCompleted = async(): Promise<void> => {
+    const todosCompleted = todos.filter((todo) => todo.completed);
+    const todosNotCompleted = todos.filter((todo) => !todo.completed);
+    try {
+      await clearCompleted(todosCompleted);
+      dispatch({ type: "CLEAR_COMPLETED", payload: {todosNotCompleted}});
+    } catch (error) {
+      console.error("Error al guardar el todo:", error);
+    }
   };
 
   const handleFilterChange = (filter: FilterValues): void => {
