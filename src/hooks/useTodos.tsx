@@ -1,7 +1,7 @@
 import { useEffect, useReducer } from "react";
 import { TodoType, FilterValues } from "../types";
 import { TODO_FILTERS } from "../const";
-import { fetchTodos, updateTodos } from "../services/todos";
+import { addTodo, fetchTodos, updateTodos } from "../services/todos";
 
 const initialState = {
   sync: false,
@@ -24,7 +24,7 @@ type Action =
   | { type: "COMPLETED"; payload: { id: string; completed: boolean } }
   | { type: "FILTER_CHANGE"; payload: { filter: FilterValues } }
   | { type: "REMOVE"; payload: { id: string } }
-  | { type: "SAVE"; payload: { title: string } }
+  | { type: "SAVE"; payload: TodoType}
   | { type: "UPDATE_TITLE"; payload: { id: string; title: string } };
 
 interface State {
@@ -88,12 +88,7 @@ const reducer = (state: State, action: Action): State => {
   }
 
   if (action.type === "SAVE") {
-    const { title } = action.payload;
-    const newTodo = {
-      id: crypto.randomUUID(),
-      title,
-      completed: false,
-    };
+    const newTodo = action.payload;
 
     return {
       ...state,
@@ -158,8 +153,18 @@ export const useTodos = (): {
     dispatch({ type: "UPDATE_TITLE", payload: { id, title } });
   };
 
-  const handleSave = (title: string): void => {
-    dispatch({ type: "SAVE", payload: { title } });
+  const handleSave = async (title: string): Promise<void> => {
+    const data = {
+      title,
+      completed: false,
+    };
+  
+    try {
+      const newTodo = await addTodo(data);
+      dispatch({type: "SAVE", payload: newTodo})
+    } catch (error) {
+      console.error("Error al guardar el todo:", error);
+    }
   };
 
   const handleClearCompleted = (): void => {

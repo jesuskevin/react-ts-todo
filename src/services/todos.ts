@@ -1,6 +1,6 @@
 import { TodoType } from '../types'
 
-const API_URL = 'https://api.jsonbin.io/v3/b/63ff3a52ebd26539d087639c';
+const API_URL = 'http://127.0.0.1:8000/api/todo';
 
 export const fetchTodos = async (): Promise<TodoType[]> => {
   const res = await fetch(API_URL)
@@ -9,7 +9,7 @@ export const fetchTodos = async (): Promise<TodoType[]> => {
     return []
   }
 
-  const { record: todos } = await res.json() as { record: TodoType[] }
+  const { data: todos } = await res.json() as { data: TodoType[] }
   return todos
 }
 
@@ -25,3 +25,16 @@ export const updateTodos = async ({ todos }: { todos: TodoType[] }): Promise<boo
 
   return res.ok
 }
+
+export const addTodo = async (data: Omit<TodoType, "id">): Promise<TodoType> => {
+  const res = await fetch(API_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data)
+  });
+
+  const todo = await res.json();
+  return todo;
+};
