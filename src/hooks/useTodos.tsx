@@ -1,7 +1,7 @@
 import { useEffect, useReducer } from "react";
 import { TodoType, FilterValues, TodoId, TodoTitle } from "../types";
 import { TODO_FILTERS } from "../const";
-import { addTodo, fetchTodos, updateTodos } from "../services/todos";
+import { addTodo, fetchTodos, removeTodo, updateTodos } from "../services/todos";
 
 const initialState = {
   sync: false,
@@ -23,7 +23,7 @@ type Action =
   | { type: "CLEAR_COMPLETED" }
   | { type: "COMPLETED"; payload: { id: string; completed: boolean } }
   | { type: "FILTER_CHANGE"; payload: { filter: FilterValues } }
-  | { type: "REMOVE"; payload: { id: string } }
+  | { type: "REMOVE"; payload: { id: TodoId } }
   | { type: "SAVE"; payload: TodoType}
   | { type: "UPDATE_TITLE"; payload: { id: TodoId; title: TodoTitle } };
 
@@ -126,11 +126,11 @@ export const useTodos = (): {
   handleClearCompleted: () => void;
   handleCompleted: (id: string, completed: boolean) => void;
   handleFilterChange: (filter: FilterValues) => void;
-  handleRemove: (id: string) => void;
+  handleRemove: (id: TodoId) => void;
   handleSave: (title: string) => void;
   handleUpdateTitle: (params: { id: TodoId; title: TodoTitle }) => void;
 } => {
-  const [{ sync, todos, filterSelected }, dispatch] = useReducer(
+  const [{ todos, filterSelected }, dispatch] = useReducer(
     reducer,
     initialState
   );
@@ -139,8 +139,13 @@ export const useTodos = (): {
     dispatch({ type: "COMPLETED", payload: { id, completed } });
   };
 
-  const handleRemove = (id: string): void => {
-    dispatch({ type: "REMOVE", payload: { id } });
+  const handleRemove = async (id: TodoId): Promise<void> => {
+    try {
+      await removeTodo(id);
+      dispatch({ type: "REMOVE", payload: { id } });
+    } catch (error) {
+      console.error("Error al borrar el todo:", error);
+    }
   };
 
   const handleUpdateTitle = async ({

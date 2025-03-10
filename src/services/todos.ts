@@ -38,3 +38,14 @@ export const addTodo = async (data: Omit<TodoType, "id">): Promise<TodoType> => 
   const todo = await res.json();
   return todo;
 };
+
+export const removeTodo = async (id: TodoId): Promise<boolean> => {
+  const res = await fetch(`${API_URL}/${id}`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+
+  return res.ok;
+}
