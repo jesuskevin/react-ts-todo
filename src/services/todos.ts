@@ -13,19 +13,6 @@ export const fetchTodos = async (): Promise<TodoType[]> => {
   return todos
 }
 
-export const updateTodos = async ({ id, title }: { id: TodoId, title: TodoTitle }): Promise<TodoType> => {
-  const res = await fetch(`${API_URL}/${id}`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({title})
-  })
-
-  const todo = await res.json();
-  return todo;
-}
-
 export const addTodo = async (data: Omit<TodoType, "id">): Promise<TodoType> => {
   const res = await fetch(API_URL, {
     method: 'POST',
@@ -39,9 +26,33 @@ export const addTodo = async (data: Omit<TodoType, "id">): Promise<TodoType> => 
   return todo;
 };
 
+export const updateTodos = async ({ id, title }: { id: TodoId, title: TodoTitle }): Promise<TodoType> => {
+  const res = await fetch(`${API_URL}/${id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({title})
+  })
+
+  const todo = await res.json();
+  return todo;
+}
+
 export const removeTodo = async (id: TodoId): Promise<boolean> => {
   const res = await fetch(`${API_URL}/${id}`, {
     method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+
+  return res.ok;
+}
+
+export const markCompleted = async (id: TodoId): Promise<boolean> => {
+  const res = await fetch(`${API_URL}/${id}/complete`, {
+    method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
@@ -57,17 +68,6 @@ export const clearCompleted = async (todosCompleted: TodoType[]): Promise<boolea
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(todosCompleted),
-  })
-
-  return res.ok;
-}
-
-export const markCompleted = async (id: TodoId): Promise<boolean> => {
-  const res = await fetch(`${API_URL}/${id}/complete`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
   })
 
   return res.ok;
