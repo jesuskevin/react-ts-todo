@@ -1,6 +1,25 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "../api/axios";
 
 export const Login: React.FC = () => {
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+
+  const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    try {
+      await axios.post('/login', {email, password});
+      setEmail("");
+      setPassword("");
+      navigate('/');
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   return (
     <section className="py-20 lg:py-[120px]">
       <div className="container mx-auto">
@@ -24,10 +43,12 @@ export const Login: React.FC = () => {
               <div className="mb-10 text-center md:mb-16 font-bold text-2xl text-[#b83f45]">
                 TODO APP
               </div>
-              <form>
+              <form onSubmit={handleLogin}>
                 <div className="mb-4">
                   <input
                     type="email"
+                    value={email}
+                    onChange={(event) => setEmail(event.target.value)}
                     placeholder="Email"
                     className="
                     border-[#E9EDF4]
@@ -51,6 +72,8 @@ export const Login: React.FC = () => {
                 <div className="mb-4">
                   <input
                     type="password"
+                    value={password}
+                    onChange={(event) => setPassword(event.target.value)}
                     placeholder="Password"
                     className="
                     border-[#E9EDF4]

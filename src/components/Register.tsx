@@ -1,6 +1,29 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "../api/axios";
 
 export const Register: React.FC = () => {
+
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [password_confirmation, setPasswordConfirmation] = useState("");
+  const navigate = useNavigate();
+
+  const handleRegister = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    try {
+      await axios.post('/register', {name, email, password, password_confirmation});
+      setName("");
+      setEmail("");
+      setPassword("");
+      setPasswordConfirmation("");
+      navigate('/');
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   return (
     <section className="py-20 lg:py-[120px]">
       <div className="container mx-auto">
@@ -24,10 +47,12 @@ export const Register: React.FC = () => {
               <div className="mb-10 text-center md:mb-16 font-bold text-2xl text-[#b83f45]">
                 TODO APP
               </div>
-              <form>
+              <form onSubmit={handleRegister}>
                 <div className="mb-4">
                   <input
                     type="text"
+                    value={name}
+                    onChange={(event) => setName(event.target.value)}
                     placeholder="Name"
                     className="
                     border-[#E9EDF4]
@@ -51,6 +76,8 @@ export const Register: React.FC = () => {
                 <div className="mb-4">
                   <input
                     type="email"
+                    value={email}
+                    onChange={(event) => setEmail(event.target.value)}
                     placeholder="Email"
                     className="
                     border-[#E9EDF4]
@@ -74,6 +101,8 @@ export const Register: React.FC = () => {
                 <div className="mb-4">
                   <input
                     type="password"
+                    value={password}
+                    onChange={(event) => setPassword(event.target.value)}
                     placeholder="Password"
                     className="
                     border-[#E9EDF4]
@@ -97,6 +126,8 @@ export const Register: React.FC = () => {
                 <div className="mb-4">
                   <input
                     type="password"
+                    value={password_confirmation}
+                    onChange={(event) => setPasswordConfirmation(event.target.value)}
                     placeholder="Password confirmation"
                     className="
                     border-[#E9EDF4]
