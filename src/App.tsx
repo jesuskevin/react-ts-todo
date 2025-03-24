@@ -1,42 +1,20 @@
-import { Todos } from "./components/Todos";
-import { Footer } from "./components/Footer";
-import { Header } from "./components/Header";
-import { useTodos } from "./hooks/useTodos";
+import Dashboard from "./components/Dashboard";
+import { Login } from "./components/Login";
+import { Navbar } from "./components/Navbar";
+import { Routes, Route } from "react-router-dom";
+import { Register } from "./components/Register";
 
 const App: React.FC = () => {
-  const {
-    activeCount,
-    completedCount,
-    filterSelected,
-    handleClearCompleted,
-    handleCompleted,
-    handleFilterChange,
-    handleRemove,
-    handleSave,
-    handleUpdateTitle,
-    todos: filteredTodos
-  } = useTodos()
-
   return (
-    <div className="todoapp">
-      <Header
-        handleAddTodo={handleSave}
-      />
-      <Todos
-        setTitle={handleUpdateTitle}
-        removeTodo={handleRemove}
-        onToggleCompleted={handleCompleted}
-        todos={filteredTodos}
-      />
-      <Footer
-        activeCount={activeCount}
-        completedCount={completedCount}
-        filterSelected={filterSelected}
-        handleClearCompleted={handleClearCompleted}
-        handleFilterChange={handleFilterChange}
-      />
-    </div>
+    <>
+      <Navbar/>
+      <Routes>
+        <Route path="/" element={<Dashboard/>}/>
+        <Route path="/login" element={<Login/>}/>
+        <Route path="/register" element={<Register/>}/>
+      </Routes>
+    </>
   );
-}
+};
 
 export default App;
