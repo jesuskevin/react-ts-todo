@@ -1,23 +1,16 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import axios from "../api/axios";
+import { Link } from "react-router-dom";
+import {useAuthContext} from "../hooks/useAuthContext";
 
 export const Login: React.FC = () => {
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate();
+
+  const { login, errors } = useAuthContext();
 
   const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    try {
-      await axios.post('/login', {email, password});
-      setEmail("");
-      setPassword("");
-      navigate('/');
-    } catch (error) {
-      console.log(error);
-    }
+    login({email, password});
   }
 
   return (
@@ -65,9 +58,11 @@ export const Login: React.FC = () => {
                     focus-visible:shadow-none
                   "
                   />
-                  <div className="flex">
-                    {/* <span className="text-red-400 text-sm m-2 p-2">error</span> */}
-                  </div>
+                  {errors.email && 
+                    <div className="flex">
+                      <span className="text-red-400 text-sm m-2 p-2">{errors.email[0]}</span>
+                    </div>
+                  }
                 </div>
                 <div className="mb-4">
                   <input
@@ -90,9 +85,11 @@ export const Login: React.FC = () => {
                     focus-visible:shadow-none
                   "
                   />
-                  <div className="flex">
-                    {/* <span className="text-red-400 text-sm m-2 p-2">error</span> */}
-                  </div>
+                  {errors.password && 
+                    <div className="flex">
+                      <span className="text-red-400 text-sm m-2 p-2">{errors.password[0]}</span>
+                    </div>
+                  }
                 </div>
                 <div className="mb-10">
                 <button
