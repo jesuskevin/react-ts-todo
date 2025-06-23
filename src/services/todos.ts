@@ -9,17 +9,18 @@ export const fetchTodos = async (): Promise<TodoType[]> => {
     return []
   }
 
-  const { data: todos } = await res.json() as { data: TodoType[] }
+  const { todos: todos } = await res.json() as { todos: TodoType[] }
+
   return todos
 }
 
-export const addTodo = async (data: Omit<TodoType, "id">): Promise<TodoType> => {
+export const addTodo = async (todos: Omit<TodoType, "id">): Promise<TodoType> => {
   const res = await fetch(API_URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(data)
+    body: JSON.stringify(todos)
   });
 
   const todo = await res.json();

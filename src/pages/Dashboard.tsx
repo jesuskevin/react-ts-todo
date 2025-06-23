@@ -15,12 +15,12 @@ const Dashboard: React.FC = () => {
     handleSave,
     handleUpdateTitle,
     todos: filteredTodos,
-    user,
+    // user,
   } = useTodos();
 
   return (
     <>
-      <p className="m-4 text-center text-2xl">{user?.email}</p>
+      {/* <p className="m-4 text-center text-2xl">{user?.email}</p> */}
       <div className="todoapp">
         <Header handleAddTodo={handleSave} />
         <Todos
