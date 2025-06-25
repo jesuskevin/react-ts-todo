@@ -24,6 +24,7 @@ export const CreateTodo: React.FunctionComponent<Props> = ({ handleAddTodo }) =>
                 }}
                 placeholder="What do you want to do?"
                 autoFocus
+                required
             />
         </form>
     );

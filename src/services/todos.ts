@@ -23,6 +23,11 @@ export const addTodo = async (todos: Omit<TodoType, "id">): Promise<TodoType> =>
     body: JSON.stringify(todos)
   });
 
+  if (!res.ok) {
+    let details = await res.json();
+    throw Error(JSON.parse(details.error)[0].message);
+  }
+
   const todo = await res.json();
   return todo;
 };
@@ -35,6 +40,11 @@ export const updateTodos = async ({ id, title }: { id: TodoId, title: TodoTitle 
     },
     body: JSON.stringify({title})
   })
+
+  if (!res.ok) {
+    let details = await res.json();
+    throw Error(JSON.parse(details.error)[0].message);
+  }
 
   const todo = await res.json();
   return todo;

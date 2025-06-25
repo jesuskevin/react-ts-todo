@@ -15,14 +15,17 @@ export const Todo: React.FunctionComponent<Props> = ({id, title, completed, remo
 
     const handleKeyDown: React.KeyboardEventHandler<HTMLInputElement> = (e) => {
         if (e.key === 'Enter') {
-        setEditedTitle(editedTitle.trim())
+            setEditedTitle(editedTitle.trim())
 
-        if (editedTitle !== title) {
-            setTitle({ id, title: editedTitle })
-        }
+            if (editedTitle !== title) {
+                setTitle({ id, title: editedTitle })
+                setIsEditing('')
+            }
 
-        if (editedTitle === '') removeTodo(id)
-            setIsEditing('')
+            if (editedTitle === '') {
+                setEditedTitle(title)
+                setIsEditing('')
+            }
         }
 
         if (e.key === 'Escape') {

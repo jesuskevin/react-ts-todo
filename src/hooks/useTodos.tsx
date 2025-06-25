@@ -169,7 +169,8 @@ export const useTodos = (): {
       await updateTodos({id, title});
       dispatch({ type: "UPDATE_TITLE", payload: { id, title } });
     } catch (error) {
-      console.error("Error al actualizar el todo:", error);
+      console.error("Error:", error);
+      alert(error);
     }
   };
 
@@ -183,7 +184,8 @@ export const useTodos = (): {
       const newTodo = await addTodo(data);
       dispatch({type: "SAVE", payload: newTodo})
     } catch (error) {
-      console.error("Error al guardar el todo:", error);
+      console.error("Error:", error);
+      alert(error);
     }
   };
 
