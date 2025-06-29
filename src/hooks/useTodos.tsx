@@ -2,7 +2,7 @@ import { useEffect, useReducer } from "react";
 import { TodoType, FilterValues, TodoId, TodoTitle } from "../types";
 import { TODO_FILTERS } from "../const";
 import { addTodo, clearCompleted, fetchTodos, markCompleted, removeTodo, updateTodos } from "../services/todos";
-// import {useAuthContext} from "../hooks/useAuthContext";
+import {useAuthContext} from "../hooks/useAuthContext";
 
 const initialState = {
   sync: false,
@@ -131,14 +131,14 @@ export const useTodos = (): {
   handleRemove: (id: TodoId) => void;
   handleSave: (title: string) => void;
   handleUpdateTitle: (params: { id: TodoId; title: TodoTitle }) => void;
-  // user: object,
+  user: object,
 } => {
   const [{ todos, filterSelected }, dispatch] = useReducer(
     reducer,
     initialState
   );
 
-  // const { user } = useAuthContext();
+  const { user } = useAuthContext();
 
   const handleCompleted = async (id: string, completed: boolean): Promise<void> => {
     try {
@@ -248,6 +248,6 @@ export const useTodos = (): {
     handleSave,
     handleUpdateTitle,
     todos: filteredTodos,
-    // user,
+    user,
   };
 };

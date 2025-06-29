@@ -1,85 +1,66 @@
+import axios from '../api/axios';
 import { TodoId, TodoTitle, TodoType } from '../types'
 
-const API_URL = 'http://127.0.0.1:8000/api/todo';
+const API_URL = '/api/todo';
 
 export const fetchTodos = async (): Promise<TodoType[]> => {
-  const res = await fetch(API_URL)
-  if (!res.ok) {
+  const res = await axios.get(`${API_URL}`);
+  if (res.status >= 400) {
     console.error('Error fetching todos')
     return []
   }
 
-  const { todos: todos } = await res.json() as { todos: TodoType[] }
+  const { todos: todos } = await res.data as { todos: TodoType[] }
 
   return todos
 }
 
 export const addTodo = async (todos: Omit<TodoType, "id">): Promise<TodoType> => {
-  const res = await fetch(API_URL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(todos)
+  const res = await axios.post(API_URL, {
+    ...todos
   });
 
-  if (!res.ok) {
-    let details = await res.json();
-    throw Error(JSON.parse(details.error)[0].message);
+  if (res.status >= 400) {
+    throw Error("Something went wroing, please try again later.");
   }
 
-  const todo = await res.json();
+  const todo = await res.data;
   return todo;
 };
 
 export const updateTodos = async ({ id, title }: { id: TodoId, title: TodoTitle }): Promise<TodoType> => {
-  const res = await fetch(`${API_URL}/${id}`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({title})
+  const res = await axios.put(`${API_URL}/${id}`, {
+    title
   })
 
-  if (!res.ok) {
-    let details = await res.json();
-    throw Error(JSON.parse(details.error)[0].message);
+  if (res.status >= 400) {
+    throw Error("Something went wroing, please try again later.");
   }
 
-  const todo = await res.json();
+  const todo = await res.data;
   return todo;
 }
 
 export const removeTodo = async (id: TodoId): Promise<boolean> => {
-  const res = await fetch(`${API_URL}/${id}`, {
-    method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  })
+  const res = await axios.delete(`${API_URL}/${id}`);
 
-  return res.ok;
+  if (res.status >= 400) {
+    throw Error("Something went wroing, please try again later.");
+  }
+
+  return res.data;
 }
 
 export const markCompleted = async (id: TodoId): Promise<boolean> => {
-  const res = await fetch(`${API_URL}/${id}/complete`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  })
+  const res = await axios.post(`${API_URL}/${id}/complete`);
 
-  return res.ok;
+  return res.data;
 }
 
 export const clearCompleted = async (todosCompleted: TodoType[]): Promise<boolean> => {
-  const res = await fetch(`${API_URL}/clear-completed`, {
-    method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(todosCompleted),
+  const res = await axios.delete(`${API_URL}/clear-completed`, {
+    data: todosCompleted
   })
 
-  return res.ok;
+  return res.data;
 }

@@ -58,9 +58,9 @@ export const Login: React.FC = () => {
                     focus-visible:shadow-none
                   "
                   />
-                  {errors.email && 
+                  {errors && 
                     <div className="flex">
-                      <span className="text-red-400 text-sm m-2 p-2">{errors.email[0]}</span>
+                      <span className="text-red-400 text-sm m-2 p-2">{errors.message}</span>
                     </div>
                   }
                 </div>
@@ -85,11 +85,6 @@ export const Login: React.FC = () => {
                     focus-visible:shadow-none
                   "
                   />
-                  {errors.password && 
-                    <div className="flex">
-                      <span className="text-red-400 text-sm m-2 p-2">{errors.password[0]}</span>
-                    </div>
-                  }
                 </div>
                 <div className="mb-10">
                 <button

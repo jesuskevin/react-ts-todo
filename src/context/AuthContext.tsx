@@ -9,35 +9,30 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const navigate = useNavigate();
   const [errors, setErrors] = useState([]);
 
-  const csrf = () => axios.get("/sanctum/csrf-cookie");
-
   const getUser = async () => {
-    const { data } = await axios.get("/api/user", {withCredentials: true});
+    const { data } = await axios.post("/auth/user");
     setUser(data);
   };
 
   const login = async ({ ...data }) => {
-    await csrf();
     try {
-      await axios.post("/login", data);
+      await axios.post("/auth/login", data);
       await getUser();
       navigate("/");
     } catch (error) {
       if (error instanceof AxiosError) {
         if (error.response?.status === 422) {
-          setErrors(error.response.data.errors);
+          setErrors(error.response.data);
         }
       }
-      console.log(error);
     }
   };
 
   const register = async ({ ...data }) => {
-    await csrf();
     try {
-      await axios.post("/register", data);
+      await axios.post("/auth/register", data);
       await getUser();
-      navigate("/");
+      navigate("/login");
     } catch (error) {
       if (error instanceof AxiosError) {
         if (error.response?.status === 422) {
@@ -49,8 +44,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const logout = () => {
-    axios.post('/logout').then(() => {
+    axios.post('/auth/logout').then(() => {
       setUser(null);
+    }).catch(err => {
+      if (err.status === 401) {
+        setUser(null);
+        navigate('/');
+      }
     })
   };
 

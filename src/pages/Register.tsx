@@ -12,7 +12,7 @@ export const Register: React.FC = () => {
   
     const handleRegister = async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
-      register({name, email, password, password_confirmation});
+      register({name, email, password});
     }
 
   return (
