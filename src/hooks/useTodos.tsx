@@ -1,12 +1,14 @@
 import { useEffect, useReducer } from "react";
 import { TodoType, FilterValues, TodoId, TodoTitle } from "../types";
 import { TODO_FILTERS } from "../const";
-import { addTodo, clearCompleted, fetchTodos, markCompleted, removeTodo, updateTodos } from "../services/todos";
-import {useAuthContext} from "../hooks/useAuthContext";
+import { addTodo, clearCompleted, fetchTodos, markCompleted, removeTodo, updateTodos, summarize } from "../services/todos";
+import { useAuthContext } from "../hooks/useAuthContext";
 
 const initialState = {
   sync: false,
   todos: [],
+  summary: '',
+  showModal: false,
   filterSelected: (() => {
     // read from url query params using URLSearchParams
     const params = new URLSearchParams(window.location.search);
@@ -21,17 +23,20 @@ const initialState = {
 
 type Action =
   | { type: "INIT_TODOS"; payload: { todos: TodoType[] } }
-  | { type: "CLEAR_COMPLETED"; payload: { todosNotCompleted: TodoType[] }}
+  | { type: "CLEAR_COMPLETED"; payload: { todosNotCompleted: TodoType[] } }
   | { type: "COMPLETED"; payload: { id: string; completed: boolean } }
   | { type: "FILTER_CHANGE"; payload: { filter: FilterValues } }
   | { type: "REMOVE"; payload: { id: TodoId } }
-  | { type: "SAVE"; payload: TodoType}
-  | { type: "UPDATE_TITLE"; payload: { id: TodoId; title: TodoTitle } };
+  | { type: "SAVE"; payload: TodoType }
+  | { type: "UPDATE_TITLE"; payload: { id: TodoId; title: TodoTitle } }
+  | { type: "SHOW_SUMMARY"; payload: { summary: string; showModal: boolean } };
 
 interface State {
   sync: boolean;
   todos: TodoType[];
   filterSelected: FilterValues;
+  summary: string,
+  showModal: boolean,
 }
 
 const reducer = (state: State, action: Action): State => {
@@ -117,6 +122,16 @@ const reducer = (state: State, action: Action): State => {
     };
   }
 
+  if (action.type === "SHOW_SUMMARY") {
+    const { summary, showModal } = action.payload;
+    return {
+      ...state,
+      sync: false,
+      summary,
+      showModal,
+    };
+  }
+
   return state;
 };
 
@@ -131,9 +146,13 @@ export const useTodos = (): {
   handleRemove: (id: TodoId) => void;
   handleSave: (title: string) => void;
   handleUpdateTitle: (params: { id: TodoId; title: TodoTitle }) => void;
-  user: object,
+  handleSummarize: () => void;
+  handleCloseModal: () => void;
+  summary: string;
+  showModal: boolean;
+  user: object;
 } => {
-  const [{ todos, filterSelected }, dispatch] = useReducer(
+  const [{ todos, filterSelected, summary, showModal }, dispatch] = useReducer(
     reducer,
     initialState
   );
@@ -166,7 +185,7 @@ export const useTodos = (): {
     title: TodoTitle;
   }): Promise<void> => {
     try {
-      await updateTodos({id, title});
+      await updateTodos({ id, title });
       dispatch({ type: "UPDATE_TITLE", payload: { id, title } });
     } catch (error) {
       console.error("Error:", error);
@@ -179,22 +198,22 @@ export const useTodos = (): {
       title,
       completed: false,
     };
-  
+
     try {
       const newTodo = await addTodo(data);
-      dispatch({type: "SAVE", payload: newTodo})
+      dispatch({ type: "SAVE", payload: newTodo })
     } catch (error) {
       console.error("Error:", error);
       alert(error);
     }
   };
 
-  const handleClearCompleted = async(): Promise<void> => {
+  const handleClearCompleted = async (): Promise<void> => {
     const todosCompleted = todos.filter((todo) => todo.completed);
     const todosNotCompleted = todos.filter((todo) => !todo.completed);
     try {
       await clearCompleted(todosCompleted);
-      dispatch({ type: "CLEAR_COMPLETED", payload: {todosNotCompleted}});
+      dispatch({ type: "CLEAR_COMPLETED", payload: { todosNotCompleted } });
     } catch (error) {
       console.error("Error al guardar el todo:", error);
     }
@@ -210,6 +229,15 @@ export const useTodos = (): {
       "",
       `${window.location.pathname}?${params.toString()}`
     );
+  };
+
+  const handleSummarize = async () => {
+    const result = await summarize();
+    dispatch({ type: "SHOW_SUMMARY", payload: { summary: result, showModal: true } });
+  };
+
+  const handleCloseModal = () => {
+    dispatch({ type: "SHOW_SUMMARY", payload: { summary: '', showModal: false } });
   };
 
   const filteredTodos = todos.filter((todo) => {
@@ -247,7 +275,11 @@ export const useTodos = (): {
     handleRemove,
     handleSave,
     handleUpdateTitle,
+    handleSummarize,
+    handleCloseModal,
     todos: filteredTodos,
+    summary,
+    showModal,
     user,
   };
 };

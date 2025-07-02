@@ -64,3 +64,13 @@ export const clearCompleted = async (todosCompleted: TodoType[]): Promise<boolea
 
   return res.data;
 }
+
+export const summarize = async (): Promise<string> => {
+  const res = await axios.get(`${API_URL}/summarize`);
+  if (res.status >= 400) {
+    console.error('Something went wrong, please try again later.')
+    return '';
+  }
+
+  return res.data.summary;
+}
